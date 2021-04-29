@@ -26,57 +26,10 @@
                 message:"enter valid email."
             });
         }
-        // else if(pass.test(req.body.password)==false || req.body.password==' '|| req.body.password==null)
-        // {
-        //     return res.json({
-        //         message:"enter valid password."
-        //     });
-        // }
+       
         else
         {
-            // req.body.password=md(req.body.password);
-
-            // user.users.findOne({
-            //     $or: [
-            //         { email :req.body.email },
-            //         { password: req.body.password }               
-            //     ]
-            // },function(err,result){
-            //     if(result)
-            //     {
-            //         return res.json({
-            //             message:"email or password or already exists.."
-            //         });
-            //     }
-            //     else if(err)
-            //     {
-            //         return res.json({
-            //             message:err.message
-            //         });
-            //     }
-            //     else
-            //     {
-
-            //         user.users.create(req.body,function(err,result){
-            //             if(err)
-            //             {
-            //                 return res.json({
-            //                     message:err.message
-            //                 });
-            //             }
-            //             else if(result)
-            //             {
-            //                 return res.json({
-            //                     message:"signup successful!!"
-            //                 });
-            //             }
-            //         })
-                
-
-            //     }
-            // });
-
-            user.adminuser.findOne({email:req.body.email},function(err,result){
+                user.adminuser.findOne({email:req.body.email},function(err,result){
                 if(err)
                 {
                     return res.json({
