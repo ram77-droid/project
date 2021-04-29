@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<style>
+   button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 10%;
+    }
+</style>
+  
+<body>
+  <center>
+    <h2>Users</h2>
+ </center>
+ <!--Step 1 : Adding HTML-->
+  <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">_id</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Email</th>           
+          </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(function(user) { %>
+            <tr>
+                <!-- <th scope="row">1</th> -->
+                <td><%=  user._id   %></td>
+                <td><%=  user.username   %></td>
+                <td><%=  user.email   %></td>               
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+  
+      <a href="/add-user">add user</a></br>
+      <button type="button">remove user</button>
+
+
+      <script type="text/javascript">
+        window.history.forward();
+        function noBack() {
+            window.history.forward();
+        }
+    </script>
+</body>
+  
+</html>
