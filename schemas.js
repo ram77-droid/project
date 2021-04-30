@@ -68,13 +68,13 @@
 
        var follower_schema= new Schema({
            user_id:mongoose.Types.ObjectId,
-           follower_id:mongoose.Types.ObjectId,
+           follower_user_id:mongoose.Types.ObjectId,
            status:Boolean
        });
 
        var following_schema= new Schema({
            user_id:mongoose.Types.ObjectId,
-           following_id:mongoose.Types.ObjectId,
+           following_user_id:mongoose.Types.ObjectId,
            status:Boolean
        });
 

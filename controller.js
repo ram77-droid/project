@@ -645,7 +645,7 @@
     });
 
     // follower API
-    app.post('/follower',function(req,res){
+    app.post('/followeruser',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
         user.users.findOne({_id:vary._id},function(err,result){
@@ -659,7 +659,7 @@
             {
                      obj={
                     user_id:vary._id,
-                    follower_id:req.body.follower_id,
+                    follower_user_id:req.body.follower_user_id,
                     status:req.body.status
                 }
                 user.follow.create(obj,function(err,result){
@@ -696,7 +696,7 @@
     });
 
     //following API
-    app.post('/following',function(req,res){
+    app.post('/followinguser',function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
         user.users.findOne({_id:vary._id},function(err,result){
@@ -709,8 +709,8 @@
             else if(result)
             {
                 obj={
-                    user_id:req.body.user_id,
-                    following_id:vary._id,
+                    user_id:vary._id,
+                    following_user_id:req.body.following_user_id,
                     status:req.body.status
                 }
                 user.following.create(obj,function(err,result){
@@ -746,8 +746,192 @@
         });
     });
 
-    //follow API
-    
+    //following API
+    app.post('/request',function(req,res){
+        token=req.headers.authorization.split(' ')[1];
+        //var vary=jwt.verify(token,'ram');
+        console.log("token:",token);
+        // user.users.findOne({_id:vary._id},function(err,find_success){
+        //     console.log("success:",find_success);
+        //     if(err)
+        //     {
+        //         return res.status(400).json({
+        //             status:400,
+        //             message:err.message
+        //         });
+        //     }
+        //     else if(find_success)
+        //     {
+        //         user.following.findOne({following_id:find_success._id,user_id:req.body.user_id},function(err,result){
+        //             if(err)
+        //             {
+        //                 return res.json({
+        //                     message:err.message
+        //                 });
+        //             }
+        //             else if(result)
+        //             {
+        //                 if(result.status==true)
+        //                 {
+        //                     user.following.updateOne({_id:result._id},{status:false},function(err,success){
+        //                         if(err)
+        //                         {
+        //                             return res.json({
+        //                                 message:err.message
+        //                             });
+        //                         }
+        //                         else if(success)
+        //                         {
+        //                             return res.json({
+        //                                 message:"unfollow successful!!"
+        //                             });
+        //                         }
+        //                     });
+        //                 }
+
+        //                 else if(result.status==false)
+        //                 {
+        //                     user.following.updateOne({_id:result._id},{status:true},function(err,success){
+        //                         if(err)
+        //                         {
+        //                             return res.json({
+        //                                 message:err.message
+        //                             });
+        //                         }
+        //                         else
+        //                         if(success)
+        //                         {
+        //                             return res.json({
+        //                                 message:"follow successful!!"
+        //                             });
+        //                         }
+        //                     });
+        //                 }
+        //                  else 
+        //                  {
+                            
+        //                     return res.json({
+        //                         message:"something wrong"
+        //                     });
+        //                  }
+
+        //             }
+        //             else 
+        //             {
+        //                obj={
+        //                    user_id:vary._id,
+        //                    following_id:req.body.following_id,
+        //                    status:req.body.status
+        //                }
+        //                 user.following.create(obj,function(err,result){
+        //                     if(err)
+        //                     {
+        //                         return res.json({
+        //                             message:err.message
+        //                         });
+        //                     }
+        //                     else if(result)
+        //                     {
+        //                         return res.json({
+        //                             message:"following"
+        //                         });
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     }
+        // });
+    });
+
+    //follower API
+    app.post('/acceptfollow',function(req,res){
+        token=req.headers.authorization.split(' ')[1];
+        var vary=jwt.verify(token,'ram');
+        user.users.findOne({_id:vary._id},function(err,find_success){
+            if(err)
+            {
+                return res.json({
+                    message:err.message
+                });
+            }
+            else if(find_success)
+            {
+                user.follow.findOne({user_id:find_success._id},function(err,success){
+                    if(err)
+                    {
+                        return res.json({
+                            message:err.message
+                        });
+                    }
+                    else if(success)
+                    {
+                        if(success.follower_id==req.body.follower_id && req.body.status==success.status)
+                        {
+                            return res.json({
+                                message:"already following "
+                            });
+                        }
+                        else
+                        {
+                            obj={
+                                user_id:vary._id,
+                                follower_id:req.body.follower_id,
+                                status:req.body.status
+                            };
+                            if(req.body.status==true)
+                            {
+                                user.follow.create(obj,function(err,result){
+                                    if(err)
+                                    {
+                                        return res.json({
+                                            message:err.message
+                                        });
+                                    }
+                                    else if(result)
+                                    {
+                                        return res.json({
+                                            message:"new follower!!"
+                                        });
+                                    }
+                                });
+
+                            }
+                            else if(req.body.status==false)
+                            {
+                                user.follow.updateOne({follower_id:req.body.follower_id},{status:false},function(err,result){
+                                    if(err)
+                                    {
+                                        return res.json({
+                                            message:err.message
+                                        });
+                                    }
+                                    else if(result)
+                                    {
+                                        return res.json({
+                                            message:"unfollowed you!!"
+                                        });
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                return res.json({
+                                    message:"no new follower!!"
+                                });
+                            }
+                            
+                        }
+                    }
+                    else
+                    {
+                        return res.json({
+                            message:"something wrong!!"
+                        });
+                    }
+                });
+            }
+        });
+    });
 
 
     // Admin collection API
