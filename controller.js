@@ -6,11 +6,10 @@
     var body_parser = require('body-parser');
     app.use(body_parser.json());
     var jwt = require('jsonwebtoken');
-  //const { constant } = require('async');
-  var midleware= require('./authorization.js');
-  var ejs = require('ejs');
-  var session = require('express-session');
-  app.use(body_parser.urlencoded({ extended: false }))
+    var midleware= require('./authorization.js');
+    var ejs = require('ejs');
+    var session = require('express-session');
+    app.use(body_parser.urlencoded({ extended: false }))
 
     var mail= /^[a-zA-Z0-9_\-]+[@][a-z]+[\.][a-z]{2,3}$/;
     var pass= /^[0-9]{4,}$/;
@@ -178,10 +177,10 @@
     });
 
     // logout API for users
-    app.get('/logout',function(req,res){
-        token1=req.headers.authorization.split(' ')[1];
-        console.log('token :',token1);
-        var vary=jwt.verify(token1,'ram');
+    app.get('/logout',midleware.check,function(req,res){
+        token=req.headers.authorization.split(' ')[1];
+        console.log('token :',token);
+        var vary=jwt.verify(token,'ram');
         console.log("result:",vary);
         user.users.updateOne({_id:vary._id},{device_token:null,token:null},function(err,result){
             if(err)
@@ -320,7 +319,7 @@
                 {
                   $lookup:
                   {
-                      from:"followes",
+                      from:"followers",
                     //   localField:"_id",
                     //   foreignField:"user_id",
                     let:{
@@ -369,8 +368,8 @@
                                 {
                                   $expr:{
                                       $and:[
-                                        { "$eq": [ "$$userid", "$following_id" ],
-                                        "$eq":["$status","$status"]
+                                        { "$eq": [ "$$userid", "$user_id" ],
+                                        "$eq":["$$status","$status"]
                                        }
                                       ]
                                   }
@@ -644,207 +643,106 @@
         });
     });
 
-    // follower API
-    app.post('/followeruser',midleware.check,function(req,res){
+     //following API
+    app.post('/requestfollow',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
-        user.users.findOne({_id:vary._id},function(err,result){
-            if(err)
-            {
-                return res.status(400).json({
-                    message:err.message
-                });
-            }
-            else if(result)
-            {
-                     obj={
-                    user_id:vary._id,
-                    follower_user_id:req.body.follower_user_id,
-                    status:req.body.status
-                }
-                user.follow.create(obj,function(err,result){
-                    if(err)
-                    {
-                        return res.status(400).json({
-                            status:400,
-                            message:err.message
-                        });
-                    }
-                    else if(result)
-                    {
-                        return res.status(200).json({
-                            status:200,
-                            message:"follower!!"
-                        });
-                    }
-                    else{
-                        return res.status(400).json({
-                            status:400,
-                            message:"error "
-                        });
-                    }
-                });
-            }
-            else
-            {
-                return res.status(400).json({
-                    status:400,
-                    message:"eror occur!!"
-                });
-            }
-        });
-    });
-
-    //following API
-    app.post('/followinguser',function(req,res){
-        token=req.headers.authorization.split(' ')[1];
-        var vary=jwt.verify(token,'ram');
-        user.users.findOne({_id:vary._id},function(err,result){
-            if(err)
-            {
-                return res.status(400).json({
-                    message:err.message
-                });
-            }
-            else if(result)
-            {
-                obj={
-                    user_id:vary._id,
-                    following_user_id:req.body.following_user_id,
-                    status:req.body.status
-                }
-                user.following.create(obj,function(err,result){
-                    if(err)
-                    {
-                        return res.status(400).json({
-                            status:400,
-                            message:err.message
-                        });
-                    }
-                    else if(result)
-                    {
-                        return res.status(200).json({
-                            status:200,
-                            message:"following!!"
-                        });
-                    }
-                    else{
-                        return res.status(400).json({
-                            status:400,
-                            message:"error "
-                        });
-                    }
-                });
-            }
-            else
-            {
-                return res.status(400).json({
-                    status:400,
-                    message:"eror occur!!"
-                });
-            }
-        });
-    });
-
-    //following API
-    app.post('/requestfollow',function(req,res){
-        token=req.headers.authorization.split(' ')[1];
-        //var vary=jwt.verify(token,'ram');
         console.log("token:",token);
-        // user.users.findOne({_id:vary._id},function(err,find_success){
-        //     console.log("success:",find_success);
-        //     if(err)
-        //     {
-        //         return res.status(400).json({
-        //             status:400,
-        //             message:err.message
-        //         });
-        //     }
-        //     else if(find_success)
-        //     {
-        //         user.following.findOne({following_id:find_success._id,user_id:req.body.user_id},function(err,result){
-        //             if(err)
-        //             {
-        //                 return res.json({
-        //                     message:err.message
-        //                 });
-        //             }
-        //             else if(result)
-        //             {
-        //                 if(result.status==true)
-        //                 {
-        //                     user.following.updateOne({_id:result._id},{status:false},function(err,success){
-        //                         if(err)
-        //                         {
-        //                             return res.json({
-        //                                 message:err.message
-        //                             });
-        //                         }
-        //                         else if(success)
-        //                         {
-        //                             return res.json({
-        //                                 message:"unfollow successful!!"
-        //                             });
-        //                         }
-        //                     });
-        //                 }
+        user.users.findOne({_id:vary._id},function(err,find_success){
+            console.log("success:",find_success);
+            if(err)
+            {
+                return res.status(400).json({
+                    status:400,
+                    message:err.message
+                });
+            }
+            else if(find_success)
+            {
+                user.following.findOne({user_id:find_success._id,following_user_id:req.body.following_user_id},function(err,result){
+                    console.log("result:",result);
+                    if(err)
+                    {
+                        return res.json({
+                            message:err.message
+                        });
+                    }
+                    else if(result)
+                    {
+                        if(result.status==true)
+                        {
+                            user.following.updateOne({_id:result._id},{status:false},function(err,success){
+                                if(err)
+                                {
+                                    return res.json({
+                                        message:err.message
+                                    });
+                                }
+                                else if(success)
+                                {
+                                    return res.json({
+                                        message:"unfollow successful!!"
+                                    });
+                                }
+                            });
+                        }
 
-        //                 else if(result.status==false)
-        //                 {
-        //                     user.following.updateOne({_id:result._id},{status:true},function(err,success){
-        //                         if(err)
-        //                         {
-        //                             return res.json({
-        //                                 message:err.message
-        //                             });
-        //                         }
-        //                         else
-        //                         if(success)
-        //                         {
-        //                             return res.json({
-        //                                 message:"follow successful!!"
-        //                             });
-        //                         }
-        //                     });
-        //                 }
-        //                  else 
-        //                  {
+                        else if(result.status==false)
+                        {
+                            user.following.updateOne({_id:result._id},{status:true},function(err,success){
+                                if(err)
+                                {
+                                    return res.json({
+                                        message:err.message
+                                    });
+                                }
+                                else
+                                if(success)
+                                {
+                                    return res.json({
+                                        message:"follow successful!!"
+                                    });
+                                }
+                            });
+                        }
+                         else 
+                         {
                             
-        //                     return res.json({
-        //                         message:"something wrong"
-        //                     });
-        //                  }
+                            return res.json({
+                                message:"something wrong"
+                            });
+                         }
 
-        //             }
-        //             else 
-        //             {
-        //                obj={
-        //                    user_id:vary._id,
-        //                    following_id:req.body.following_id,
-        //                    status:req.body.status
-        //                }
-        //                 user.following.create(obj,function(err,result){
-        //                     if(err)
-        //                     {
-        //                         return res.json({
-        //                             message:err.message
-        //                         });
-        //                     }
-        //                     else if(result)
-        //                     {
-        //                         return res.json({
-        //                             message:"following"
-        //                         });
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     }
-        // });
+                    }
+                    else 
+                    {
+                       obj={
+                           user_id:vary._id,
+                           following_user_id:req.body.following_user_id,
+                           status:req.body.status
+                       }
+                        user.following.create(obj,function(err,result){
+                            if(err)
+                            {
+                                return res.json({
+                                    message:err.message
+                                });
+                            }
+                            else if(result)
+                            {
+                                return res.json({
+                                    message:"following"
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
     });
 
     //follower API
-    app.post('/acceptfollow',function(req,res){
+    app.post('/acceptfollow',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
         user.users.findOne({_id:vary._id},function(err,find_success){
@@ -857,6 +755,7 @@
             else if(find_success)
             {
                 user.follow.findOne({user_id:find_success._id},function(err,success){
+                   
                     if(err)
                     {
                         return res.json({
@@ -865,7 +764,7 @@
                     }
                     else if(success)
                     {
-                        if(success.follower_id==req.body.follower_id && req.body.status==success.status)
+                        if(success.follower_user_id==req.body.follower_user_id && req.body.status==success.status)
                         {
                             return res.json({
                                 message:"already following "
@@ -873,60 +772,61 @@
                         }
                         else
                         {
-                            obj={
-                                user_id:vary._id,
-                                follower_id:req.body.follower_id,
-                                status:req.body.status
-                            };
-                            if(req.body.status==true)
-                            {
-                                user.follow.create(obj,function(err,result){
-                                    if(err)
-                                    {
-                                        return res.json({
-                                            message:err.message
-                                        });
-                                    }
-                                    else if(result)
-                                    {
-                                        return res.json({
-                                            message:"new follower!!"
-                                        });
-                                    }
-                                });
-
-                            }
-                            else if(req.body.status==false)
-                            {
-                                user.follow.updateOne({follower_id:req.body.follower_id},{status:false},function(err,result){
-                                    if(err)
-                                    {
-                                        return res.json({
-                                            message:err.message
-                                        });
-                                    }
-                                    else if(result)
-                                    {
-                                        return res.json({
-                                            message:"unfollowed you!!"
-                                        });
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                return res.json({
-                                    message:"no new follower!!"
-                                });
-                            }
-                            
+                             return res.json({
+                            message:"something wrong!!"
+                             });
                         }
                     }
                     else
                     {
-                        return res.json({
-                            message:"something wrong!!"
-                        });
+                       
+                        obj={
+                            user_id:vary._id,
+                            follower_user_id:req.body.follower_user_id,
+                            status:req.body.status
+                        };
+                        if(req.body.status==true)
+                        {
+                            user.follow.create(obj,function(err,result){
+                                if(err)
+                                {
+                                    return res.json({
+                                        message:err.message
+                                    });
+                                }
+                                else if(result)
+                                {
+                                    return res.json({
+                                        message:"new follower!!"
+                                    });
+                                }
+                            });
+
+                        }
+                        else if(req.body.status==false)
+                        {
+                            user.follow.updateOne({follower_id:req.body.follower_id},{status:false},function(err,result){
+                                if(err)
+                                {
+                                    return res.json({
+                                        message:err.message
+                                    });
+                                }
+                                else if(result)
+                                {
+                                    return res.json({
+                                        message:"unfollowed you!!"
+                                    });
+                                }
+                            });
+                        }
+                        else
+                        {
+                            return res.json({
+                                message:"no new follower!!"
+                            });
+                        }
+                        
                     }
                 });
             }

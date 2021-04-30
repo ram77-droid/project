@@ -96,7 +96,7 @@
     var adminuser=mongoose.model('adminusers',adminuser_schema);
     module.exports.adminuser=adminuser;
 
-    var follow= mongoose.model('followes',follower_schema);
+    var follow= mongoose.model('followers',follower_schema);
     module.exports.follow=follow;
 
     var following=mongoose.model('followings',following_schema);
