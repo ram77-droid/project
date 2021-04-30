@@ -747,7 +747,7 @@
     });
 
     //following API
-    app.post('/request',function(req,res){
+    app.post('/requestfollow',function(req,res){
         token=req.headers.authorization.split(' ')[1];
         //var vary=jwt.verify(token,'ram');
         console.log("token:",token);
