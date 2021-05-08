@@ -767,7 +767,7 @@
                         if(success.follower_user_id==req.body.follower_user_id && req.body.status==success.status)
                         {
                             return res.json({
-                                message:"already following "
+                                message:"already exists "
                             });
                         }
                         else
