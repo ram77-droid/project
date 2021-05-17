@@ -5,6 +5,5 @@ mongoose.set('useCreateIndex', true);
 mongoose.connect(onlineurl, { useNewUrlParser: true, useUnifiedTopology: true },function(err, db) {
   if (err) throw err;
   console.log("Database created!");
-  //db.close();
 });
 
