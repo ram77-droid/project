@@ -78,6 +78,14 @@
            status:Boolean
        });
 
+
+       var chat_schema= new Schema({
+       sender_id:mongoose.Types.ObjectId,
+       receiver_id:mongoose.Types.ObjectId,
+       chat_id:mongoose.Types.ObjectId,
+       message:String
+       });
+
     var users = mongoose.model('users',user_schema);
     module.exports.users=users;
 
@@ -101,6 +109,9 @@
 
     var following=mongoose.model('followings',following_schema);
     module.exports.following=following;
+
+    var chat=mongoose.model('chats',chat_schema);
+    module.exports.chat=chat;
 
 
 
