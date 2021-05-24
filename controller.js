@@ -534,7 +534,7 @@
     });
 
     // comment API for comment collection
-    app.post('/comment',function(req,res){
+    app.post('/comment',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
         console.log("result:",vary);
