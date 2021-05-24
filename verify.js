@@ -9,15 +9,20 @@ module.exports.check= function check(req,res,next)
     if(req.headers.authorization)
     {
         token=req.headers.authorization.split(' ')[1];
+        console.log("tokennn:",token);
         var vary=jwt.verify(token,'ram');
-        user.users.findOne({token:vary.token},function(err,result){
+        console.log("token is:",vary);
+       console.log("token is:",vary._id);
+        user.users.findOne({_id:vary._id},function(err,result){
+            console.log("error:",err);
+            console.log("resultttt:",result);
             if(err)
             {
                 return res.json({
                     message:err.message
                 });
             }
-            if(result)
+            else if(result)
             {
                 console.log("result is:",result);
                 next();               

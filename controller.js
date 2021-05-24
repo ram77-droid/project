@@ -6,7 +6,7 @@
     var body_parser = require('body-parser');
     app.use(body_parser.json());
     var jwt = require('jsonwebtoken');
-    var midleware= require('./authorization.js');
+    var midleware= require('./verify.js');
     var ejs = require('ejs');
     var session = require('express-session');
     app.use(body_parser.urlencoded({ extended: false }))
@@ -534,7 +534,7 @@
     });
 
     // comment API for comment collection
-    app.post('/comment',midleware.check,function(req,res){
+    app.post('/comment',function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');
         console.log("result:",vary);
