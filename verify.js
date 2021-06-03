@@ -14,8 +14,7 @@ module.exports.check= function check(req,res,next)
         console.log("token is:",vary);
        console.log("token is:",vary._id);
         user.users.findOne({_id:vary._id},function(err,result){
-            console.log("error:",err);
-            console.log("resultttt:",result);
+           
             if(err)
             {
                 return res.json({
@@ -24,7 +23,7 @@ module.exports.check= function check(req,res,next)
             }
             else if(result)
             {
-                console.log("result is:",result);
+                
                 next();               
                
             }

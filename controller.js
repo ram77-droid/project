@@ -618,6 +618,40 @@
         });
     });
 
+    app.post('/edit',upload.any(),midleware.check,function(req,res){
+        token=req.headers.authorization.split(' ')[1];
+        var vary=jwt.verify(token,'ram');
+        obj={
+            user_id:vary._id,
+            fullname:req.body.fullname,
+            photo:'/pictures/'+req.files[0].filename
+           
+        };
+        user.edit.create(obj,function(err,result){
+            if(err)
+            {
+                return res.status(400).json({
+                    status:400,
+                    message:err.message
+                });
+            }
+            else if(result)
+            {
+                return res.status(200).json({
+                    status:200,
+                    message:"edited"
+                });
+            }
+            else
+            {
+                return res.status(400).json({
+                    message:"something went wrong"
+                });
+            }
+        });
+
+    })
+
     app.get('/deleteaccount',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');

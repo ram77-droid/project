@@ -79,12 +79,140 @@
        });
 
 
-       var chat_schema= new Schema({
-       sender_id:mongoose.Types.ObjectId,
-       receiver_id:mongoose.Types.ObjectId,
-       chat_id:mongoose.Types.ObjectId,
-       message:String
-       });
+    //    var chat_schema= new Schema({
+    //    sender_id:{
+    //       type:mongoose.Types.ObjectId,
+    //        ref:"users"
+    //     },
+    //    receiver_id:{
+    //    type: mongoose.Types.ObjectId,
+    //     ref:"users"
+    //  },
+      
+    //    message:String
+    //    });
+
+    var edit_schema=new Schema(
+        {
+            user_id:{
+                type:mongoose.Types.ObjectId,
+                ref:"users"
+            },
+            fullname:String,
+            photo:String
+
+        }
+    )
+
+       const chat_schema = new mongoose.Schema({
+        sender_id: {
+            type: Schema.Types.ObjectId, 
+            ref: 'users',
+            required:true           
+        },
+        receiver_id: {
+            type: Schema.Types.ObjectId, 
+            ref: 'users',
+            required:true       
+        },
+        status:{
+            type:String,
+            enum:[0,1,2], /*0  = chat inactive and 1  = chat active and 2= chat declined*/
+            default:0
+        },
+        sender_read:{
+            type:String,
+            enum:[0,1], /*0 - unread, 1 - read*/
+           
+            default:0
+        },
+        receiver_read:{
+            type:String,
+            enum:[0,1], /*0 - unread, 1 - read*/
+           
+            default:0
+        },
+        sender_enter:{
+            type:String,
+            enum:[0,1], /*0 - sender leave chat, 1 - sender entered in chat room*/
+           
+            default:0
+        },
+        receiver_enter:{
+            type:String,
+            enum:[0,1], /*0 - receiver leave chat, 1 - receiver enetered in chat room*/
+           
+            default:0
+        },
+        block:{
+            type:String,
+            enum:[0,1],
+           
+            default:0  /** 0 = not block and 1 = blocked */
+        },
+        user_deactivate:{
+            type: Boolean,
+            default: 0, 
+          
+        },
+        created_at: {
+            type: Date,
+            default: Date.now
+        },
+        updated_at: {
+            type: Date,
+            default: Date.now
+        }       
+});
+
+    const message_schema = new mongoose.Schema({
+    chat_id:{
+        type: Schema.Types.ObjectId, 
+        ref: 'chats',
+        required:true  
+    },
+    sender_id: {
+        type: Schema.Types.ObjectId, 
+        ref: 'users',
+        required:true           
+    },
+    receiver_id: {
+        type: Schema.Types.ObjectId, 
+        ref: 'users',
+        required:true       
+    },
+    message:{
+        type:String,
+        default:""
+    },
+    image:{
+        type:String,
+        default:""
+    },
+    status:{
+        type:String,
+        enum:[0,1],
+        default:0
+    },
+    seen:{
+        type:String,
+        enum:[0,1],
+        default:0
+    },
+    // timestamp: 
+    // {
+    //     type: String, 
+    //     required:true
+    // },
+    created_at: {
+        type: Date,
+        default: Date.now
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now
+    }       
+  });
 
     var users = mongoose.model('users',user_schema);
     module.exports.users=users;
@@ -112,6 +240,12 @@
 
     var chat=mongoose.model('chats',chat_schema);
     module.exports.chat=chat;
+
+    var message=mongoose.model('messages',message_schema);
+    module.exports.message=message;
+
+    var edit=mongoose.model("edits",edit_schema);
+    module.exports.edit=edit;
 
 
 
