@@ -20,7 +20,7 @@ socket.on('join', function (req) {
        user.users.findOne({_id:req.user_id},function(err,result){
            if(err)
            {
-               return err;
+            return err;
            }
            else if(result)
            {
@@ -30,17 +30,15 @@ socket.on('join', function (req) {
         
 
            }
+           else
+           {
+            io.sockets.emit('join', { status: 1 , message:"something went wrong" });
+           }
        });
     } 
 });   
 
-socket.on('visit',function(req){
-    console.log("socket",req);
-   
-   
-    io.sockets.emit('visit',{status:1, message:"hi"});
-    console.log("rree",req.user_id);
-});
+
 
 socket.on('ram',function(req){
     console.log("rammmm");
@@ -73,15 +71,48 @@ socket.on('ram',function(req){
     });
 });
 
- socket.on('mess',function(req){
+socket.on('viewmessage',function(req){
+if(req.user_id)
+{
+   
+    user.message.find({receiver_id:req.user_id},function(err,result)
+    {
+        if(err)
+        {
+            return err;
+        }
+        else if(result)
+        {
+
+            console.log("res:",result[0].receiver_id);
+            if(req.user_id==result[0].receiver_id)
+            {
+
+              
+            console.log("result:",result[0].message);
+            io.sockets.emit('viewmessage',{status:1,mess:result});
+
+            }
+            
+        }
+        else
+        {
+            io.sockets.emit('viewmessage',{status:1,message:"not good"});
+        }
+    });
+}
+});
+
+ socket.on('sendmessage',function(req){
      console.log("req:",req);
-     io.sockets.emit('mess',{status:1,message:"mess"});
+    // io.sockets.emit('mess',{status:1,message:"mess"});
      obj={
          chat_id:req.chat_id,
          sender_id:req.sender_id,
          receiver_id:req.receiver_id,
          message:req.message
      }
+     console.log("object:",obj);
      user.message.create(obj,function(err,result){
          if(err)
          {
@@ -90,7 +121,7 @@ socket.on('ram',function(req){
          else if(result)
          {
              console.log("resulttt",result);
-             io.sockets.emit('mess',{status:1,message:result.message});
+             io.sockets.emit('sendmessage',{status:1,message:"message sent"});
          }
          else
          {
