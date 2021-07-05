@@ -916,7 +916,7 @@
           }
           else if(result)
           {
-              res.redirect('/save-user');
+              res.redirect('/add-user');
           }
           else
           {

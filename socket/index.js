@@ -27,8 +27,6 @@ socket.on('join', function (req) {
             console.log("join");
             console.log("reqqq",req.user_id);
          io.sockets.emit('join', { status: 1 , message: "Sucessfully Joined."});
-        
-
            }
            else
            {
@@ -40,35 +38,42 @@ socket.on('join', function (req) {
 
 
 
-socket.on('ram',function(req){
-    console.log("rammmm");
-   console.log("id",req.sender_id);
-   
-  
-    obj={
-        sender_id:req.sender_id,
-        receiver_id:req.receiver_id
-        //chat_id:req.chat_id,
-        // message:req.message
-        
-    }
+socket.on('initialize',function(req){
+    console.log("initialize");
     console.log("req:",req);
-    console.log("objjj:",obj);
-    user.chat.create(obj,function(err,result){
-
+  
+    user.chat.findOne({$or:[{sender_id:req.sender_id,receiver_id:req.receiver_id},{sender_id:req.receiver_id,receiver_id:req.sender_id}]},function(err,result)
+    {
         if(err)
         {
-            console.log("error",err)
+            io.sockets.emit('initialize', { status: 1 , message:"an error occur"});
         }
         else if(result)
         {
-            console.log("result:",result);
-            console.log("result agya")
-            io.sockets.emit('ram', { status: 1 , message:result});
-          
-
+            io.sockets.emit('initialize', { status: 1 , message:"chat initialized already"});
         }
-    });
+        else
+        {
+            obj={
+                sender_id:req.sender_id,
+                receiver_id:req.receiver_id  
+            }
+            console.log("objjj:",obj);
+            user.chat.create(obj,function(err,result){
+
+                if(err)
+                {
+                    io.sockets.emit('initialize', { status: 1 , message:err});
+                }
+                else if(result)
+                {
+                    console.log("result:",result);
+                    console.log("result agya")
+                    io.sockets.emit('initialize', { status: 1 , message:"chat initialized"});
+                }
+            });
+        }
+    });  
 });
 
 socket.on('viewmessage',function(req){
@@ -90,7 +95,7 @@ if(req.user_id)
 
               
             console.log("result:",result[0].message);
-            io.sockets.emit('viewmessage',{status:1,mess:result});
+            io.sockets.emit('viewmessage',{status:1,mess:result[0].message});
 
             }
             
@@ -99,7 +104,7 @@ if(req.user_id)
         {
             io.sockets.emit('viewmessage',{status:1,message:"not good"});
         }
-    });
+    }).sort({message:-1});
 }
 });
 
