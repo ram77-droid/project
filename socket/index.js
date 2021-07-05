@@ -4,7 +4,6 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 var body_parser = require('body-parser');
 app.use(body_parser.json());
- //require('events').EventEmitter.prototype._maxListeners = 0;
 
 io.on('connection', function (socket) {
     console.log('connected');   
@@ -35,8 +34,6 @@ socket.on('join', function (req) {
        });
     } 
 });   
-
-
 
 socket.on('initialize',function(req){
     console.log("initialize");
@@ -137,6 +134,10 @@ if(req.user_id)
 });
 
 //server.listen(4000);
-server.listen(4000, function(){
-    console.log('Server listening on port 4000');
-});
+// server.listen(4000, function(){
+//     console.log('Server listening on port 4000');
+// });
+const PORT = process.env.PORT || 4000;
+    app.listen(PORT, function(){
+        console.log('Server listening on port 4000');
+    });
