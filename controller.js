@@ -867,6 +867,81 @@
         });
     });
 
+    app.get('/discover',midleware.check,function(req,res){
+        token=req.headers.authorization.split(' ')[1];
+        var vary=jwt.verify(token,'ram');
+        user.users.findOne({_id:vary._id},function(err,find_success){
+            if(err)
+            {
+                return res.status(400).json(
+                    {
+                       status:400,
+                        message:"some thing went wrong"
+                    }
+                );
+            }
+            else if(find_success)
+            {
+                user.posts.aggregate([{
+                    
+            
+                $lookup:
+                {
+                    from:"likes",
+                    localField:"_id",
+                     foreignField:"post_id",
+                     as:"postlike"
+                }
+                },
+
+                {
+                    $match:
+                    {
+                       "postlike.like_status" :{
+                          $eq:true
+                        }
+                    }
+
+                },
+                {
+                    $count:"liked_count"
+
+                }
+                
+                // {
+                //     $project:
+                //     {
+                //        "postlike.like_status":1 
+                //     }
+                // }
+                 ],function(err,result){
+                     if(err)
+                     {
+                         return res.status(400).json({
+                             status:400,
+                             message:err.message
+                         });
+                     }
+                     else if(result)
+                     {
+                         return res.status(200).json({
+                             status:200,
+                             message:result
+                         });
+                     }
+                     else
+                     {
+                         return res.status(400).json({
+                             status:400,
+                             message:"some thing went wrong"
+                         });
+                     }
+
+                 });
+            }
+        });
+    });
+
 
     // Admin collection API
     app.post('/admin',function(req,res){
