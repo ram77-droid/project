@@ -502,7 +502,7 @@
         obj={
             user_id:vary._id,
             caption:req.body.caption,
-            image:'http://192.168.1.75:3000/pictures/'+req.files[0].filename,
+            image:'http://192.168.1.79:3000/pictures/'+req.files[0].filename,
             post_at:Date.now()
         };
      user.posts.create(obj,function(err,result){
@@ -882,37 +882,73 @@
             }
             else if(find_success)
             {
-                user.posts.aggregate([{
-                    
-            
-                $lookup:
-                {
-                    from:"likes",
-                    localField:"_id",
-                     foreignField:"post_id",
-                     as:"postlike"
-                }
+                user.posts.aggregate([
+               {
+                    $lookup:
+                    {
+                        from:"likes",
+                        // localField:"_id",
+                        // foreignField:"post_id",
+                        let:
+                        {
+                            id : "$_id"
+                        },
+                        pipeline:[
+                            {
+                                $match:
+                                {
+                                  $expr:
+                                  {
+                                      $and:[
+                                        { "$eq": [ "$$id", "$post_id" ] },
+                                        { "$eq": [ "$like_status",true ] }
+                                      ]
+                                  }
+                                }
+                            },
+                            //  {
+                            //     $project:
+                            //     {
+                            //         "caption":1,
+                            //         "image":1         
+                            //     }
+                            //  }
+                        ],
+                        as:"postlike"
+                    }
                 },
 
-                {
-                    $match:
+                // {
+                //     $match:
+                //     {
+                //        "postlike.like_status" :{
+                //           $eq:true
+                //         }
+                //     }
+
+                // },
+                
+               {
+                    $addFields:
                     {
-                       "postlike.like_status" :{
-                          $eq:true
-                        }
+                        postlike:{$size:"$postlike.like_status"
+                    }
                     }
 
-                },
-                {
-                    $count:"liked_count"
-
-                }
+               },
+               
                 
                 // {
                 //     $project:
                 //     {
+                //         image:1,
+                //         post_at:1,
                 //        "postlike.like_status":1 
+                       
                 //     }
+                // },
+                // {
+                //     $sortByCount:"$like_status"
                 // }
                  ],function(err,result){
                      if(err)
@@ -937,7 +973,7 @@
                          });
                      }
 
-                 });
+                 }).sort({postlike:-1});
             }
         });
     });

@@ -11,8 +11,7 @@ module.exports.check= function check(req,res,next)
         token=req.headers.authorization.split(' ')[1];
         console.log("tokennn:",token);
         var vary=jwt.verify(token,'ram');
-        console.log("token is:",vary);
-       console.log("token is:",vary._id);
+       
         user.users.findOne({_id:vary._id},function(err,result){
            
             if(err)

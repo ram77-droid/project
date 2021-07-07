@@ -47,7 +47,11 @@
            type:mongoose.Types.ObjectId,
        ref:"posts"
        },
-       like_status:Boolean,
+       like_status:
+       {
+           type:Boolean,
+           default:0
+       },
        liked_at:Date
       });
 
