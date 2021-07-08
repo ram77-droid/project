@@ -105,7 +105,7 @@ io.on('connection', function (socket) {
                 {
                     io.sockets.emit('viewmessage',{status:1,message:"not good"});
                 }
-            }).sort({message:-1});
+            }).sort({message:1});
         }
         });
 
