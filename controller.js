@@ -867,6 +867,7 @@
         });
     });
 
+    //discover API
     app.get('/discover',midleware.check,function(req,res){
         token=req.headers.authorization.split(' ')[1];
         var vary=jwt.verify(token,'ram');

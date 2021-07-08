@@ -139,5 +139,5 @@ io.on('connection', function (socket) {
 
 
   server.listen(4000, function(){
-    console.log('Server listening on port 8080');
+    console.log('Server listening on port 4000');
 });
