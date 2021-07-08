@@ -1019,24 +1019,42 @@
 
     app.post('/save-user', function(req, res){
       console.log('req', req.body);
-      user.adminuser.create(req.body,function(err,result){
+      user.adminuser.findOne({email:req.body.email},function(err,result){
           if(err)
           {
               return res.json({
-                  message:err.message
+                  message:"errrorrr"
               });
           }
           else if(result)
           {
-              res.redirect('/add-user');
+              return res.json({
+                  message:"email already exists"
+              });
           }
           else
           {
-              return res.json({
-                  message:"not exists"
-              });
+            user.adminuser.create(req.body,function(err,result){
+                if(err)
+                {
+                    return res.json({
+                        message:err.message
+                    });
+                }
+                else if(result)
+                {
+                    res.redirect('/add-user');
+                }
+                else
+                {
+                    return res.json({
+                        message:"not exists"
+                    });
+                }
+            });
           }
       });
+     
 
     });
 
