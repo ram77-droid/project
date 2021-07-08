@@ -29,7 +29,7 @@ io.on('connection', function (socket) {
                 {
                     console.log("join");
                     console.log("reqqq",req.user_id);
-                    io.sockets.in(req.user_id).emit('join', { status: 1 , message: "Sucessfully Joined."});
+                    io.sockets.emit('join', { status: 1 , message: "Sucessfully Joined."});
                 }
                 else
                 {
