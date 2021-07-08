@@ -10,7 +10,11 @@
         border: none;
         cursor: pointer;
         width: 10%;
+        text-align: center;
     }
+    table, th, td {
+  border: 1px solid black;
+}
 </style>
   
 <body>
@@ -18,7 +22,7 @@
     <h2>Users</h2>
  </center>
  <!--Step 1 : Adding HTML-->
-  <table class="table">
+  <table style="width: 80%;",>
         <thead>
           <tr>
             <th scope="col">_id</th>
@@ -37,9 +41,9 @@
           <% }); %>
         </tbody>
       </table>
-  
-      <a href="/add-user">add user</a></br>
-      <button type="button">remove user</button>
+    </br>
+     <button type="button" style="width: 20%;"><a href="/add-user">add user</a> </button> </br>
+      <button type="button" style="width: 20%;">remove user</button>
 
 
       <script type="text/javascript">
