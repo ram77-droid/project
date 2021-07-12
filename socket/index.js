@@ -79,40 +79,7 @@ io.on('connection', function (socket) {
             });  
         });
 
-        socket.on('viewmessage',function(req){
-            user.message.find({$or:[{receiver_id:req.receiver_id},{sender_id:req.sender_id}]},function(err,result)
-            {
-                if(err)
-                {
-                    return err;
-                }
-                else if(result)
-                {
-
-                    console.log("res:",result[0].receiver_id);
-                    if(req.receiver_id==result[0].receiver_id || req.sender_id==result[0].sender_id)
-                    {
-
-                    
-                    console.log("result:",result[0].message);
-                    io.sockets.emit('viewmessage',result[0].message);
-
-                    }
-                    
-                }
-                else
-                {
-                    io.sockets.emit('viewmessage',{status:1,message:"not good"});
-                }
-            }).sort({message:-1});
-        // if(req.receiver_id || req.sender_id)
-        // {
-        
-            
-        // }
-        });
-
-    socket.on('sendmessage',function(req){
+        socket.on('sendmessage',function(req){
         console.log("req:",req);
         console.log("ttype",typeof(req));
         console.log("chat id",req.chat_id);
@@ -173,7 +140,118 @@ io.on('connection', function (socket) {
             }
         });
        
-    });
+        });
+
+      socket.on('viewmessage',function(req){
+        user.message.find({$or:[{receiver_id:req.receiver_id},{sender_id:req.sender_id}]},function(err,result)
+        {
+            if(err)
+            {
+                return err;
+            }
+            else if(result)
+            {
+
+                console.log("res:",result[0].receiver_id);
+                if(req.receiver_id==result[0].receiver_id || req.sender_id==result[0].sender_id)
+                {
+
+                
+                console.log("result:",result[0].message);
+                io.sockets.emit('viewmessage',result[0].message);
+
+                }
+                
+            }
+            else
+            {
+                io.sockets.emit('viewmessage',{status:1,message:"not good"});
+            }
+        }).sort({message:-1});
+    // if(req.receiver_id || req.sender_id)
+    // {
+    
+        
+    // }
+      }); 
+      socket.on('allchat',function(req){
+          user.chat.find({sender_id:req.user_id},function(err,result){
+              if(err)
+              {
+                  console.log("errrr");
+              }
+              else if(result)
+              {
+                  //console.log("result",result);
+                 // io.sockets.in(req.user_id).emit('allchat',{status:1,data:result});
+                  user.chat.aggregate([
+                      {
+                          $lookup:
+                          {
+                            from:"messages",
+                             let:{
+                                 id:"$_id"
+
+                             },
+                             pipeline:[
+                                {
+                                    $match:
+                                    {
+                                      $expr:
+                                      {
+                                          $and:[
+                                            { "$eq": [ "$$id", "$chat_id" ] }
+                                          ]
+                                      }
+                                    }
+                                },
+                                {
+                                    $sort:{created_at:-1}
+                                },
+                                {
+                                    $project:
+                                    {
+                                        sender_id:1,
+                                        receiver_id:1,
+                                        "message":1        
+                                    }
+                                 },
+                                
+                                 {
+                                     $limit:1
+                                 }
+                                 
+
+                             ],
+                              as:"lastmessage"
+                          },
+                          
+                      }
+                      
+                      
+                  ],function(err,result){
+                      if(err)
+                      {
+                          io.sockets.in(req.user_id).emit('allchat',{status:1,message:err.message});
+                      }
+                      else if(result)
+                      {
+                          console.log("rrrr",result);
+                        io.sockets.in(req.user_id).emit('allchat',{status:1,data:result});
+                      }
+                      else
+                      {
+                        io.sockets.in(req.user_id).emit('allchat',{status:1,message:"something wrong"});
+                      }
+
+                  }).sort({created_at:1});
+              }
+              else 
+              {
+                io.sockets.in(req.user_id).emit('allchat',{status:1,message:"some thing went wrong"});
+              }
+          });
+      });
 });
 
 
