@@ -21,7 +21,8 @@
            
         if(mail.test(req.body.email)==false || req.body.email==' '|| req.body.email==null)
         {
-            return res.json({
+            return res.status(400).json({
+                status:400,
                 message:"enter valid email."
             });
         }
@@ -31,7 +32,8 @@
                 user.adminuser.findOne({email:req.body.email},function(err,result){
                 if(err)
                 {
-                    return res.json({
+                    return res.status(400).json({
+                        status:400,
                         message:err.message
                     });
                 }
@@ -47,7 +49,8 @@
                    user.users.create(obj,function(err,success){
                        if(err)
                        {
-                           return res.json({
+                           return res.status(400).json({
+                               status:400,
                                message:err.message
                            });
                        }
@@ -85,7 +88,8 @@
 
       if(pass.test(req.body.password)==false || req.body.password==' '|| req.body.password==null)
         {
-            return res.json({
+            return res.status(400).json({
+                status:400,
                 message:"enter valid password."
             });
         }
@@ -96,7 +100,8 @@
             user.users.findOne({username:req.body.username,password:req.body.password},function(find_err,find_success){
                 if(find_err)
                 {
-                    return res.json({
+                    return res.status(400).json({
+                        status:400,
                         message:find_err.message
                     });
                 }
@@ -123,7 +128,8 @@
                             function(err,result){
                                 if(err)
                                 {
-                                    return res.json({
+                                    return res.status(400).json({
+                                        status:400,
                                         message:err.message
                                     });
                                 }
@@ -158,7 +164,8 @@
                     }
                     else
                     {
-                        return res.json({
+                        return res.status(400).json({
+                            status:400,
                             message:"username or password doesn't match.."
                         });
                     }
@@ -166,7 +173,8 @@
                 }
                 else
                 {
-                    return res.json({
+                    return res.status(400).json({
+                        status:400,
                         message:"username or password doesn't match.."
                     });
                 }
@@ -185,13 +193,15 @@
         user.users.updateOne({_id:vary._id},{device_token:null,token:null},function(err,result){
             if(err)
             {
-                return res.json({
+                return res.status(400).json({
+                    status:400,
                     message:err.message
                 });
             }
             if(result)
             {
-                return res.json({
+                return res.status(400).json({
+                    status:400,
                     message:"you are logged out"
                 });
             }
@@ -294,7 +304,8 @@
         user.users.findOne({_id:vary._id},function(err,result){
             if(err)
             {
-                return res.json({
+                return res.status(400).json({
+                    status:400,
                     message:err.message
                 });
             }
@@ -454,7 +465,8 @@
                 ],function(err,result){
                     if(err)
                     {
-                        return res.json({
+                        return res.status(400).json({
+                            status:400,
                             message:err.message
                         });
                     }
