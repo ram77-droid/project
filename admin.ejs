@@ -86,18 +86,18 @@
     <!--Step 1 : Adding HTML-->
     <form action="/admin" method="post">
         <div class="imgcontainer">
-           <img src="http://192.168.1.79:3000/OIP.jpg"  alt="Avatar" class="avatar">
+           <img src="http://192.168.1.20:3000/OIP.jpg"  alt="Avatar" class="avatar">
         </div>
   
         <div class="container">
             <center>
-            <label><b>Username</b></label>
+            <label><b>Enter User_id</b></label>
             <input type="email" placeholder="Enter email" name="email" required></br>
   
-            <label><b>Password</b></label>
+            <label><b>Enter Password</b></label>
             <input type="password" placeholder="Enter Password" name="password" required></br>
             <center>
-            <button type="submit">Login</button></br>
+            <button type="submit" onclick="box()">save</button></br>
             <input type="checkbox" checked="checked"> Remember me
             </center>
         </center>
@@ -119,6 +119,10 @@
         function noBack() {
             window.history.forward();
         }
+        function box()
+            {
+                alert("admin svaed!!");
+            }
     </script>
 </body>
   

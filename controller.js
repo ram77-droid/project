@@ -1004,7 +1004,7 @@
             else if(result)
             {
                 return res.json({
-                    message:"admin created!!"
+                    message:"admin added!!"
                 });
             }
             else
