@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+<style>
+    /*set border to the form*/
+      
+    form {
+        border: 1px solid #f1f1f1;
+    }
+    /*assign full width inputs*/
+      
+    input[type=email],
+    input[type=password] {
+        width: 20%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    /*set a style for the buttons*/
+      
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 10%;
+    }
+    /* set a hover effect for the button*/
+      
+    button:hover {
+        opacity: 0.8;
+    }
+    /*set extra style for the cancel button*/
+      
+    .cancelbtn {
+        width: auto;
+        padding: 10px 18px;
+        background-color: #f44336;
+    }
+    /*centre the display image inside the container*/
+      
+    .imgcontainer {
+        text-align: center;
+        margin: 24px 0 12px 0;
+    }
+    /*set image properties*/
+      
+    img.avatar {
+        width: 10%;
+        border-radius: 50%;
+    }
+    /*set padding to the container*/
+      
+    .container {
+        padding: 16px;
+    }
+    /*set the forgot password text*/
+      
+    span.psw {
+        float: right;
+        padding-top: 16px;
+    }
+    /*set styles for span and cancel button on small screens*/
+      
+    /* @media screen and (max-width: 300px) {
+        span.psw {
+            display: block;
+            float: none;
+        }
+        .cancelbtn {
+            width: 100%;
+        }
+    } */
+</style>
+  
+<body>
+  <center>
+    <h2>Admin Login</h2>
+
+  </center>
+   
+    <!--Step 1 : Adding HTML-->
+    <form action="/admin" method="post">
+        <div class="imgcontainer">
+           <img src="http://192.168.1.79:3000/OIP.jpg"  alt="Avatar" class="avatar">
+        </div>
+  
+        <div class="container">
+            <center>
+            <label><b>Username</b></label>
+            <input type="email" placeholder="Enter email" name="email" required></br>
+  
+            <label><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required></br>
+            <center>
+            <button type="submit">Login</button></br>
+            <input type="checkbox" checked="checked"> Remember me
+            </center>
+        </center>
+           
+        </div>
+  
+        <div class="container" style="background-color:#f1f1f1">
+            <center>
+                <button type="button" class="cancelbtn">Cancel</button>
+                <span class="psw">Forgot <a href="#">password?</a></span>
+            </center>
+           
+        </div>
+    </form>
+  
+
+    <script type="text/javascript">
+        window.history.forward();
+        function noBack() {
+            window.history.forward();
+        }
+    </script>
+</body>
+  
+</html>

@@ -1092,6 +1092,18 @@
         });
         });
 
+        app.get('/admin', function(req,res){     
+            ejs.renderFile('./admin.ejs', {}, 
+                {}, function (err, template) {
+                    // console.log("template",template);
+                if (err) {
+                    throw err;
+                } else {
+                    res.end(template);
+                }
+            });
+            });
+
         app.post('/adminlogin', function(req, res){
             console.log('req', req.body.email);
             user.admin.findOne({email:req.body.email},{password:req.body.password},function(err,success){
